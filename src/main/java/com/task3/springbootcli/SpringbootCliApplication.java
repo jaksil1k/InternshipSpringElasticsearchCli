@@ -1,6 +1,6 @@
 package com.task3.springbootcli;
 
-import com.task3.springbootcli.service.ElasticSearchService;
+import com.task3.springbootcli.service.TextService;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.DefaultParser;
@@ -15,7 +15,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class SpringbootCliApplication implements CommandLineRunner {
 
 	@Autowired
-	private ElasticSearchService elasticSearchService;
+	private TextService elasticSearchService;
 
 	@Override
 	public void run(String... args) throws Exception {
@@ -28,10 +28,14 @@ public class SpringbootCliApplication implements CommandLineRunner {
 		CommandLine line = parser.parse(options, args);
 
 		if (line.hasOption("e") && line.hasOption("s")){
-			if (!line.getOptionValue("e").equals("add") && !line.getOptionValue("s").equals("search")){
+			if (!line.getOptionValue("e").equals("add") && !line.getOptionValue("e").equals("search")){
 				System.out.println("unknown command");
 			} else {
-				System.out.println("input was successfully written in");
+				if (line.getOptionValue("e").equals("add")){
+					elasticSearchService.addToElasticsearch(line.getOptionValue("s"));
+				} else {
+					elasticSearchService.searchInElasticsearch(line.getOptionValue("s"));
+				}
 			}
 		} else {
 			System.out.println("should be in this pattern: -e add/search -s <some text>");
